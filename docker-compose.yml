@@ -7,7 +7,7 @@ services:
   #
 
   eventstore:
-    image: eventstore/eventstore
+    image: eventstore/eventstore:release-5.0.8
     container_name: eventstore-node
     logging:
       driver: "none"
