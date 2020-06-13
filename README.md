@@ -26,7 +26,7 @@ Then, run the following script to install all Node.js dependencies:
 
 Eventually, to build all Docker images:
 ```shell script
-sed -i -E "s/(HOST=([0-9]+\.)+[0-9]+)/HOST=$address/" .env
+ifconfig | sed -i -E "s/(HOST=([0-9]+\.)+[0-9]+)/HOST=$address/" .env
 sudo docker-compose build --parallel
 ```
 
