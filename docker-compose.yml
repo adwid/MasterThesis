@@ -193,7 +193,7 @@ services:
       - .env
 
   #
-  # USER (BY GARY LOVISETTO)
+  # USER (see https://github.com/glovise15/MasterThesis)
   #
 
   user-db:
@@ -240,7 +240,7 @@ services:
       - '.env'
 
   #
-  # ACTOR (BY GARY LOVISETTO)
+  # ACTOR (see https://github.com/glovise15/MasterThesis)
   #
 
   actor-db:
