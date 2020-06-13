@@ -2,7 +2,10 @@
 ##### by Adrien Widart
 
 ## Description
-`Agenda`, `Carpooling` and `Rental` are three services for scalable and extensible social networks.
+[`Agenda`](https://github.com/adwid/MasterThesis-AgendaModule), 
+[`Carpooling`](https://github.com/adwid/MasterThesis-CarpoolingModule) 
+and [`Rental`](https://github.com/adwid/MasterThesis-RentingModule) 
+are three services for scalable and extensible social networks.
 The development is based on the DEVI approach. See the [thesis](./Thesis.pdf) for all explanations.
 
 `Foundation` comes from a previous thesis (see the [repository](https://github.com/glovise15/MasterThesis) for more details).
