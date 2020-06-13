@@ -1,0 +1,9 @@
+[submodule "Carpooling"]
+	path = Carpooling
+	url = https://github.com/adwid/MasterThesis-CarpoolingModule
+[submodule "Agenda"]
+	path = Agenda
+	url = https://github.com/adwid/MasterThesis-AgendaModule
+[submodule "Rental"]
+	path = Rental
+	url = https://github.com/adwid/MasterThesis-RentingModule
