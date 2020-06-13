@@ -5,7 +5,7 @@
 `Agenda`, `Carpooling` and `Rental` are three services for scalable and extensible social networks.
 The development is based on the DEVI approach. See the [thesis](./Thesis.pdf) for all explanations.
 
-`Foundation` comes from a previous thesis (see the [repository](https://github.com/glovise15/MasterThesis)).
+`Foundation` comes from a previous thesis (see the [repository](https://github.com/glovise15/MasterThesis) for more details).
 
 The files `.env` and `docker-compose.yml` have all the information required to generate the Docker images.
 
