@@ -1,0 +1,9 @@
+[submodule "Agenda"]
+	path = Agenda
+	url = ./Agenda
+[submodule "Carpooling"]
+	path = Carpooling
+	url = ./Carpooling/
+[submodule "Rental"]
+	path = Rental
+	url = ./Rental
