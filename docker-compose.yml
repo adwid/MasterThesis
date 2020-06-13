@@ -1,0 +1,286 @@
+version: '3'
+
+services:
+
+  #
+  #  EVENTSTORE
+  #
+
+  eventstore:
+    image: eventstore/eventstore
+    container_name: eventstore-node
+    logging:
+      driver: "none"
+    ports:
+      - "${EVENTSTORE_HTTP_CLIENT_PORT}:${ES_HTTP_PORT}"
+      - "${EVENTSTORE_TCP_PORT}:${ES_TCP_PORT}"
+
+  #
+  # AGENDA
+  #
+
+  agenda-inbox:
+    container_name: agenda-inbox
+    build: ./Agenda/Inbox
+    volumes:
+      - "./Agenda/Inbox:/app/src"
+    ports:
+      - "${AGENDA_INBOX_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+    env_file:
+      - .env
+
+  agenda-outbox-db:
+    image: mongo
+    container_name: agenda-outbox-db
+    logging:
+      driver: "none"
+    ports:
+      - "${AGENDA_OUTBOX_DB_PORTS}:${DB_PORTS}"
+    #      - "27017-27019:27017-27019"
+
+  agenda-outbox:
+    container_name: agenda-outbox
+    build: ./Agenda/Outbox
+    volumes:
+      - "./Agenda/Outbox:/app/src"
+    ports:
+      - "${AGENDA_OUTBOX_PORT}:${HOST_PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - agenda-outbox-db
+
+  agenda-querier-db:
+    image: mongo
+    container_name: agenda-querier-db
+    logging:
+      driver: "none"
+    ports:
+      - "${AGENDA_QUERIER_DB_PORTS}:${DB_PORTS}"
+    #      - "27017-27019:27017-27019"
+
+  agenda-querier:
+    container_name: agenda-querier
+    build: ./Agenda/Querier
+    volumes:
+      - "./Agenda/Querier:/app/src"
+    ports:
+      - "${AGENDA_QUERIER_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+      - agenda-querier-db
+    env_file:
+      - .env
+
+  #
+  # CARPOOLING
+  #
+
+  carpooling-inbox:
+    container_name: carpooling-inbox
+    build: ./Carpooling/Inbox
+    volumes:
+      - "./Carpooling/Inbox:/app/src"
+    ports:
+      - "${CARPOOLING_INBOX_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+    env_file:
+      - .env
+
+  carpooling-outbox-db:
+    image: mongo
+    container_name: carpooling-outbox-db
+    logging:
+      driver: "none"
+    ports:
+      - "${CARPOOLING_OUTBOX_DB_PORTS}:${DB_PORTS}"
+    #      - "27017-27019:27017-27019"
+
+  carpooling-outbox:
+    container_name: carpooling-outbox
+    build: ./Carpooling/Outbox
+    volumes:
+      - "./Carpooling/Outbox:/app/src"
+    ports:
+      - "${CARPOOLING_OUTBOX_PORT}:${HOST_PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - carpooling-outbox-db
+
+  carpooling-querier-db:
+    image: mongo
+    container_name: carpooling-querier-db
+    logging:
+      driver: "none"
+    ports:
+      - "${CARPOOLING_QUERIER_DB_PORTS}:${DB_PORTS}"
+  #      - "27020-27022:27017-27019"
+
+  carpooling-querier:
+    container_name: carpooling-querier
+    build: ./Carpooling/Querier
+    volumes:
+      - "./Carpooling/Querier:/app/src"
+    ports:
+      - "${CARPOOLING_QUERIER_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+      - carpooling-querier-db
+    env_file:
+      - .env
+
+  #
+  # RENTAL
+  #
+
+  rental-inbox:
+    container_name: rental-inbox
+    build: Rental/Inbox
+    volumes:
+      - "./Rental/Inbox:/app/src"
+    ports:
+      - "${RENTAL_INBOX_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+    env_file:
+      - .env
+
+  rental-outbox-db:
+    image: mongo
+    container_name: rental-outbox-db
+    logging:
+      driver: "none"
+    ports:
+      - "${RENTAL_OUTBOX_DB_PORTS}:${DB_PORTS}"
+    #      - "27017-27019:27017-27019"
+
+  rental-outbox:
+    container_name: rental-outbox
+    build: Rental/Outbox
+    volumes:
+      - "./Rental/Outbox:/app/src"
+    ports:
+      - "${RENTAL_OUTBOX_PORT}:${HOST_PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - rental-outbox-db
+
+  rental-querier-db:
+    image: mongo
+    container_name: rental-querier-db
+    logging:
+      driver: "none"
+    ports:
+      - "${RENTAL_QUERIER_DB_PORTS}:${DB_PORTS}"
+  #      - "27020-27022:27017-27019"
+
+  rental-querier:
+    container_name: rental-querier
+    build: Rental/Querier
+    volumes:
+      - "./Rental/Querier:/app/src"
+    ports:
+      - "${RENTAL_QUERIER_PORT}:${HOST_PORT}"
+    depends_on:
+      - eventstore
+      - rental-querier-db
+    env_file:
+      - .env
+
+  #
+  # USER (BY GARY LOVISETTO)
+  #
+
+  user-db:
+    container_name: mt-user-db
+    build: ./Foundation/user/userDB
+    logging:
+      driver: "none"
+    volumes:
+      - './Foundation/user/userDB:/app/src'
+    ports:
+      - '${USER_DB_PORT}:${COUCHDB_PORT}'
+    env_file:
+      - '.env'
+
+  user-init-db:
+    container_name: mt-user-init-db
+    build: ./Foundation/user/userDB/init_db
+    command: [ "./wait-for-couchdb.sh" ]
+    logging:
+      driver: "none"
+    volumes:
+      - './Foundation/user/userDB/init_db:/app/src'
+    depends_on: [ "user-db" ]
+
+
+  user-command-service:
+    container_name: mt-user-command-service
+    build: ./Foundation/user/userCommand
+    volumes:
+      - './Foundation/user/userCommand:/app/src'
+    ports:
+      - '${USER_COMMAND_PORT}:${HOST_PORT_FOUNDATION}'
+    env_file:
+      - '.env'
+
+  user-query-service:
+    container_name: mt-user-query-service
+    build: ./Foundation/user/userQuery
+    volumes:
+      - './Foundation/user/userQuery:/app/src'
+    ports:
+      - '${USER_QUERY_PORT}:${HOST_PORT_FOUNDATION}'
+    env_file:
+      - '.env'
+
+  #
+  # ACTOR (BY GARY LOVISETTO)
+  #
+
+  actor-db:
+    container_name: mt-actor-db
+    build: ./Foundation/actor/actorDB
+    logging:
+      driver: "none"
+    volumes:
+      - './Foundation/actor/actorDB:/app/src'
+    ports:
+      - '${ACTOR_DB_PORT}:${COUCHDB_PORT}'
+    env_file:
+      - '.env'
+
+  actor-init-db:
+    container_name: mt-actor-init-db
+    build: ./Foundation/actor/actorDB/init_db
+    logging:
+      driver: "none"
+    command: [ "./wait-for-couchdb.sh" ]
+    volumes:
+      - './Foundation/actor/actorDB/init_db:/app/src'
+    depends_on: [ "actor-db" ]
+
+  actor-command-service:
+    container_name: mt-actor-command-service
+    build: ./Foundation/actor/actorCommand
+    volumes:
+      - './Foundation/actor/actorCommand:/app/src'
+    ports:
+      - '${ACTOR_COMMAND_PORT}:${HOST_PORT_FOUNDATION}'
+    env_file:
+      - '.env'
+
+  actor-query-service:
+    container_name: mt-actor-query-service
+    build: ./Foundation/actor/actorQuery
+    volumes:
+      - './Foundation/actor/actorQuery:/app/src'
+    ports:
+      - '${ACTOR_QUERY_PORT}:${HOST_PORT_FOUNDATION}'
+    env_file:
+      - '.env'
