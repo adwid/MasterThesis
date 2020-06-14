@@ -12,6 +12,6 @@ describe('TEST ALL MODULES', function () {
 
     it('should test the Rental Module', function () {
         require("./Rental/Test/index");
-    })
+    });
 
 });
