@@ -6,4 +6,4 @@
 	url = https://github.com/adwid/MasterThesis-AgendaModule
 [submodule "Rental"]
 	path = Rental
-	url = https://github.com/adwid/MasterThesis-RentingModule
+	url = https://github.com/adwid/MasterThesis-RentalModule
